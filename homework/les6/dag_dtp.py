@@ -5,7 +5,7 @@ from datetime import datetime
 
 DEFAULT_ARGS = {
     "owner": "airflow",
-    "start_date": datetime(2021, 5, 24),
+    "start_date": datetime(2021, 5, 27),
     "retries": 1,
     "email_on_failure": False,
     "email_on_retry": False,
