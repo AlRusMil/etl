@@ -1,0 +1,248 @@
+groups:
+  hubs:
+    part:
+      bk_dtype: int
+      satellites:
+        satellite_columns: ['name', 'mfgr', 'brand', 'type', 'size', 'container', 'retailprice', 'comment']
+    supplier:
+      bk_dtype: int
+      satellites:
+        satellite_columns: ['name', 'address', 'phone', 'acctbal', 'comment']
+    orders:
+      bk_dtype: int
+      satellites:
+        satellite_columns: ['orderstatus', 'totalprice', 'orderdate', 'orderpriority', 'shippriority', 'clerk', 'comment']
+    customer:
+      bk_dtype: int
+      satellites:
+        satellite_columns: [ 'name', 'address', 'phone', 'acctbal', 'mktsegment', 'comment' ]
+    nation:
+      bk_dtype: int
+      satellites:
+        satellite_columns: [ 'name', 'comment' ]
+    region:
+      bk_dtype: int
+      satellites:
+        satellite_columns: [ 'name', 'comment' ]
+  links:
+    nation_region:
+      hubs: ['nation', 'region']
+      satellites: False
+    supplier_nation:
+      hubs: ['supplier', 'nation']
+      satellites: False
+    customer_nation:
+      hubs: ['customer', 'nation']
+      satellites: False
+    part_supplier:
+      hubs: ['part', 'supplier']
+      satellites: True
+    part_supplier_orders:
+      hubs: ['part', 'supplier', 'orders']
+      satellites: True
+    orders_customer:
+      hubs: ['orders', 'customer']
+      satellites: False
+sources:
+  tables:
+    part:
+      columns:
+        - partkey:
+            bk_for: part
+            owner: True
+        - name:
+            satellite_for:
+              hub: part
+        - mfgr:
+            satellite_for:
+              hub: part
+        - brand:
+            satellite_for:
+              hub: part
+        - type:
+            satellite_for:
+              hub: part
+        - size:
+            satellite_for:
+              hub: part
+        - container:
+            satellite_for:
+              hub: part
+        - retailprice:
+            satellite_for:
+              hub: part
+        - comment:
+            satellite_for:
+              hub: part
+    supplier:
+      columns:
+        - suppkey:
+            bk_for: supplier
+            owner: True
+        - name:
+            satellite_for:
+              hub: supplier
+        - address:
+            satellite_for:
+              hub: supplier
+        - nationkey:
+            bk_for: nation
+            owner: False
+        - phone:
+            satellite_for:
+              hub: supplier
+        - acctbal:
+            satellite_for:
+              hub: supplier
+        - comment:
+            satellite_for:
+              hub: supplier
+    partsupp:
+      columns:
+        - partkey:
+            bk_for: part
+            owner: False
+        - suppkey:
+            bk_for: supplier
+            owner: False
+        - availqty:
+            satellite_for:
+              link:  part_supplier
+        - supplycost:
+            satellite_for:
+              link:  part_supplier
+        - comment:
+            satellite_for:
+              link:  part_supplier
+    lineitem:
+      columns:
+        - orderkey:
+            bk_for: orders
+            owner: False
+        - partkey:
+            bk_for: part
+            owner: False
+        - suppkey:
+            bk_for: supplier
+            owner: False
+        - linenumber:
+            # bk_for: lineitem
+            # owner: True
+            satellite_for:
+              link: part_supplier_orders
+        - quantity:
+            satellite_for:
+              link: part_supplier_orders
+        - extendedprice:
+            satellite_for:
+              link: part_supplier_orders
+        - discount:
+            satellite_for:
+              link: part_supplier_orders
+        - tax:
+            satellite_for:
+              link: part_supplier_orders
+        - returnflag:
+            satellite_for:
+              link: part_supplier_orders
+        - linestatus:
+            satellite_for:
+              link: part_supplier_orders
+        - shipdate:
+            satellite_for:
+              link: part_supplier_orders
+        - commitdate:
+            satellite_for:
+              link: part_supplier_orders
+        - receiptdate:
+            satellite_for:
+              link: part_supplier_orders
+        - shipinstruct:
+            satellite_for:
+              link: part_supplier_orders
+        - shipmode:
+            satellite_for:
+              link: part_supplier_orders
+        - comment:
+            satellite_for:
+              link: part_supplier_orders
+    orders:
+      columns:
+        - orderkey:
+            bk_for: orders
+            owner: True
+        - custkey:
+            bk_for: customer
+            owner: False
+        - orderstatus:
+            satellite_for:
+              hub: orders
+        - totalprice:
+            satellite_for:
+              hub: orders
+        - orderdate:
+            satellite_for:
+              hub: orders
+        - orderpriority:
+            satellite_for:
+              hub: orders
+        - shippriority:
+            satellite_for:
+              hub: orders
+        - clerk:
+            satellite_for:
+              hub: orders
+        - comment:
+            satellite_for:
+              hub: orders
+    customer:
+      columns:
+        - custkey:
+            bk_for: customer
+            owner: True
+        - name:
+            satellite_for:
+              hub: customer
+        - address:
+            satellite_for:
+              hub: customer
+        - nationkey:
+            bk_for: nation
+            owner: False
+        - phone:
+            satellite_for:
+              hub: customer
+        - acctbal:
+            satellite_for:
+              hub: customer
+        - mktsegment:
+            satellite_for:
+              hub: customer
+        - comment:
+            satellite_for:
+              hub: customer
+    nation:
+      columns:
+        - nationkey:
+            bk_for: nation
+            owner: True
+        - name:
+            satellite_for:
+              hub: nation
+        - regionkey:
+            bk_for: region
+            owner: False
+        - comment:
+            satellite_for:
+              hub: nation
+    region:
+      columns:
+        - regionkey:
+            bk_for: region
+            owner: True
+        - name:
+            satellite_for:
+              hub: region
+        - comment:
+            satellite_for:
+              hub: region

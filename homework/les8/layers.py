@@ -117,7 +117,6 @@ class DdsHOperator(DataFlowBaseOperator):  # sal -> dds for hubs
                     launch_id=launch_id
                 )
 
-                # !!! Было on conflict ({bk_column}) стало on conflict ({hub_bk})
                 insert_sql = '''
                 with x as (
                    select {bk_column}

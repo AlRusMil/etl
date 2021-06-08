@@ -1,0 +1,51 @@
+version: "3"
+services:
+  db:
+    image: "postgres:11"
+    container_name: "postgres_1"
+    ports:
+      - "5433:5432"
+    volumes:
+      - dbdata_1:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=root
+  db2:
+    image: "postgres:11"
+    container_name: "postgres_2"
+    ports:
+      - "54320:5432"
+    volumes:
+      - dbdata_2:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=root
+  metadb:
+    image: "postgres:11"
+    container_name: "postgres_meta"
+    ports:
+      - "5434:5432"
+    volumes:
+      - dbdata_meta:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=root
+  airflow:
+    image: puckel/docker-airflow
+    container_name: "airflow"
+    ports:
+      - "8080:8080"
+    environment:
+      - PYTHONPATH=/usr/local/airflow/operators/
+    volumes:
+      - ./airflow/operators:/usr/local/airflow/operators
+      - ./airflow/dags:/usr/local/airflow/dags
+    command: webserver
+
+volumes:
+  dbdata_1:
+    name: postgres_1
+  dbdata_2:
+    name: postgres_2
+  dbdata_meta:
+    name: postgres_meta

@@ -196,6 +196,4 @@ with DAG(
 
     for link_name, info in link_satellites.items():
         for source_table, task in info.items():
-            if source_table not in for_links[link_name]['hub_st_config'].values():
-                sal[source_table] >> task
             links[link_name][source_table] >> task
